@@ -55,27 +55,26 @@ if [[ -z "${TO_PASSWORD}" ]]; then
   exit 1
 fi
 
+# Start dockerd
+dockerd &
+sleep 5
+
+# -e stop on first error
+# set -e
+# -x echo cmds as executed
+set -x
+
 # Login to FROM_URL
-cmd="docker login --username ${FROM_USERNAME} --password ${FROM_PASSWORD} ${FROM_URL}"
-echo "Running: ${cmd}"
-eval "${cmd}"
+docker login --username ${FROM_USERNAME} --password ${FROM_PASSWORD} ${FROM_URL}
 
 # Download image
-cmd="docker pull ${FROM_HOST}/${FROM_IMAGE}:${FROM_TAG}"
-echo "Running: ${cmd}"
-eval "${cmd}"
+docker pull ${FROM_HOST}/${FROM_IMAGE}:${FROM_TAG}
 
 # Login to TO_URL
-cmd="docker login --username ${TO_USERNAME} --password ${TO_PASSWORD} ${TO_URL}"
-echo "Running: ${cmd}"
-eval "${cmd}"
+docker login --username ${TO_USERNAME} --password ${TO_PASSWORD} ${TO_URL}
 
 # Tag image for push
-cmd="docker tag ${FROM_HOST}/${FROM_IMAGE}:${FROM_TAG} ${TO_HOST}/${TO_IMAGE}:${TO_TAG}"
-echo "Running: ${cmd}"
-eval "${cmd}"
+docker tag ${FROM_HOST}/${FROM_IMAGE}:${FROM_TAG} ${TO_HOST}/${TO_IMAGE}:${TO_TAG}
 
 # Push image
-cmd="docker push ${TO_HOST}/${TO_IMAGE}:${TO_TAG}"
-echo "Running: ${cmd}"
-eval "${cmd}"
+docker push ${TO_HOST}/${TO_IMAGE}:${TO_TAG}
